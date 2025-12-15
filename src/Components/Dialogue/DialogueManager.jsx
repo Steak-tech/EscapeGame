@@ -48,13 +48,10 @@ const DialogueManager = ({ script, onComplete }) => {
     };
 
     if (!currentLine) return null;
-
-    console.log(displayedText)
-
     return (
         <div
             onClick={handleNext}
-            className="fixed bottom-0 left-0 w-full p-6 pb-12 via-black/90 to-transparent z-50 cursor-pointer from-amber-900 bg-gradient-to-t"
+            className="fixed bottom-0 left-0 w-full p-6 pb-12 via-black/90 to-transparent z-50 cursor-pointer from-yellow-700 bg-gradient-to-t"
         >
             <div className="max-w-4xl mx-auto">
                 <DialogueBubble

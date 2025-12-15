@@ -1,4 +1,5 @@
 import React from 'react';
+
 const DialogueBubble = ({ text, image, character, side = "left" }) => {
     const isLeft = side === "left";
 

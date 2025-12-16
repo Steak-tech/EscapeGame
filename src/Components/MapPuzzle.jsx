@@ -43,7 +43,7 @@ const cluesConfig = [
     },
 ];
 
-const MapPuzzle = ({ onOpenFullMap }) => {
+const MapPuzzle = ({ onComplete, onOpenFullMap }) => {
     const [foundPieces, setFoundPieces] = useState({});
     const [activePieceId, setActivePieceId] = useState(null);
     const [inputValue, setInputValue] = useState('');
@@ -59,8 +59,9 @@ const MapPuzzle = ({ onOpenFullMap }) => {
 
         if (allFound && !isCompleted) {
             setIsCompleted(true);
+            if (onComplete) onComplete();
         }
-    }, [foundPieces, isCompleted]);
+    }, [foundPieces, isCompleted, onComplete]);
 
     const handlePieceClick = (id) => {
         if (foundPieces[id] || isCompleted) return;
@@ -93,7 +94,7 @@ const MapPuzzle = ({ onOpenFullMap }) => {
     const activeClue = cluesConfig.find(c => c.id === activeClueId);
 
     if (isCompleted) {
-        // "Nouvelle page" : affichage plein écran de la carte réelle en grand (clic pour ouvrir une nouvelle page)
+        // "Nouvelle page" : affichage plein écran de la carte réelle en grand (sans indices supplémentaires)
         return (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
                 <div className="relative w-11/12 max-w-6xl h-[85vh] bg-slate-900 rounded-xl shadow-2xl overflow-hidden border border-amber-500/60">
@@ -104,18 +105,20 @@ const MapPuzzle = ({ onOpenFullMap }) => {
                         </h2>
                         <p className="text-amber-100/80 max-w-2xl text-sm md:text-base">
                             Les trois morceaux manquants de la carte ont été rassemblés.
-                            Clique sur la carte pour l&apos;ouvrir en grand.
+                            Une nouvelle zone de Disneyland oublié s'ouvre devant toi...
                         </p>
                         <div className="relative w-full h-full flex items-center justify-center">
                             <button
                                 type="button"
-                                onClick={() => onOpenFullMap && onOpenFullMap()}
+                                onClick={() => {
+                                    if (onOpenFullMap) onOpenFullMap();
+                                }}
                                 className="relative group focus:outline-none"
                             >
                                 <img
                                     src="src/assets/MapStudios.png"
                                     alt="Carte complète des Walt Disney Studios"
-                                    className="max-h-[60vh] w-auto rounded-lg shadow-2xl object-contain group-hover:scale-[1.02] transition-transform duration-300"
+                                    className="max-h-[60vh] w-auto rounded-lg shadow-2xl object-contain group-hover:scale-[1.02] transition-transform duration-300 cursor-pointer"
                                 />
                                 <span className="absolute inset-x-0 bottom-3 text-center text-xs md:text-sm text-amber-50/90 bg-black/50 px-3 py-1 rounded-full mx-auto w-fit">
                                     Cliquer pour ouvrir la carte en page complète

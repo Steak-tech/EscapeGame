@@ -27,6 +27,19 @@ export const GameProvider = ({ children }) => {
     });
 
 
+    // --- PERSISTANCE DANS LOCALSTORAGE ---
+    useEffect(() => {
+        localStorage.setItem('disney_inventory', JSON.stringify(inventory));
+    }, [inventory]);
+
+    useEffect(() => {
+        localStorage.setItem('disney_flags', JSON.stringify(flags));
+    }, [flags]);
+
+    useEffect(() => {
+        localStorage.setItem('disney_room', currentRoom);
+    }, [currentRoom]);
+
     // --- ACTIONS (FONCTIONS DE JEU) ---
 
     // Ajouter un objet (seulement s'il n'est pas déjà là)

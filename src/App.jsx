@@ -1,13 +1,14 @@
-import {useEffect, useState} from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import DialogueManager from './Components/Dialogue/DialogueManager.jsx'
 import DebugPanel from "./Page/DebugPanel.jsx";
-import {GameProvider, useGame} from './Context/GameContext.jsx';
+import { GameProvider, useGame } from './context/GameContext';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import './App.css';
 import { SCENARIO_INTRO } from './assets/Script.js';
 import MapPuzzle from './Components/MapPuzzle.jsx';
 import FullMapPage from './Pages/FullMapPage.jsx';
+import PinocchioPage from './Pages/PinocchioPage.jsx';
 
 export default function App() {
     const [showDialogue, setShowDialogue] = useState(true);
@@ -28,10 +29,10 @@ export default function App() {
         navigate('/map');
     };
     const Intro = () => {
-        const { inventory, pickupItem ,currentRoom, hasItem, setGameFlag} = useGame();
+        const { inventory, pickupItem, currentRoom, hasItem, setGameFlag } = useGame();
 
         useEffect(() => {
-            if(hasItem('clé anglaise')) {
+            if (hasItem('clé anglaise')) {
                 setGameFlag('intro_has_cle_anglaise', true);
             }
         }, [inventory]);
@@ -75,6 +76,7 @@ export default function App() {
             <Routes>
                 <Route path="/" element={<Intro />} />
                 <Route path="/map" element={<FullMapPage />} />
+                <Route path="/zone/pinocchio" element={<PinocchioPage />} />
             </Routes>
         </GameProvider>
     )

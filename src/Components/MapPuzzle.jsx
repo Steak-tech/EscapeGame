@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
+import {useGame} from "../Context/GameContext.jsx";
 
 const piecesConfig = [
     {
         id: 1,
-        question: "Trouver l'année de naissance de Walt Disney. Code : 1901",
+        question: "Trouver l'année de naissance de Walt Disney.",
         answer: '1901',
         position: { top: '25%', left: '10%' },
     },
     {
         id: 2,
-        question: 'Trouver le prénom OSWALD',
+        question: 'Trouver le prénom',
         answer: 'oswald',
         position: { top: '20%', left: '45%' },
     },
     {
         id: 3,
-        question: 'Trouver le code ALICE',
+        question: 'Trouver le code',
         answer: 'alice',
         position: { top: '80%', left: '60%' },
     },
@@ -50,6 +51,7 @@ const MapPuzzle = ({ onComplete, onOpenFullMap }) => {
     const [error, setError] = useState('');
     const [isCompleted, setIsCompleted] = useState(false);
     const [activeClueId, setActiveClueId] = useState(null);
+    const { setGameFlag, pickupItem, checkFlag, changeRoom  } = useGame();
 
     // Vérifie si toutes les pièces sont trouvées
     useEffect(() => {
@@ -59,6 +61,8 @@ const MapPuzzle = ({ onComplete, onOpenFullMap }) => {
 
         if (allFound && !isCompleted) {
             setIsCompleted(true);
+            setGameFlag("map_puzzle_completed", true);
+            pickupItem("carte_complete");
             if (onComplete) onComplete();
         }
     }, [foundPieces, isCompleted, onComplete]);
@@ -92,44 +96,6 @@ const MapPuzzle = ({ onComplete, onOpenFullMap }) => {
 
     const activePiece = piecesConfig.find(p => p.id === activePieceId);
     const activeClue = cluesConfig.find(c => c.id === activeClueId);
-
-    if (isCompleted) {
-        // "Nouvelle page" : affichage plein écran de la carte réelle en grand (sans indices supplémentaires)
-        return (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
-                <div className="relative w-11/12 max-w-6xl h-[85vh] bg-slate-900 rounded-xl shadow-2xl overflow-hidden border border-amber-500/60">
-                    <div className="absolute inset-0 bg-gradient-to-br from-amber-900 via-amber-700 to-emerald-800 opacity-70" />
-                    <div className="relative z-10 flex flex-col items-center justify-center h-full p-4 md:p-8 gap-4 text-center">
-                        <h2 className="text-2xl md:text-3xl font-extrabold text-amber-100 drop-shadow-lg tracking-wide">
-                            Carte complète récupérée
-                        </h2>
-                        <p className="text-amber-100/80 max-w-2xl text-sm md:text-base">
-                            Les trois morceaux manquants de la carte ont été rassemblés.
-                            Une nouvelle zone de Disneyland oublié s'ouvre devant toi...
-                        </p>
-                        <div className="relative w-full h-full flex items-center justify-center">
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    if (onOpenFullMap) onOpenFullMap();
-                                }}
-                                className="relative group focus:outline-none"
-                            >
-                                <img
-                                    src="src/assets/MapStudios.png"
-                                    alt="Carte complète des Walt Disney Studios"
-                                    className="max-h-[60vh] w-auto rounded-lg shadow-2xl object-contain group-hover:scale-[1.02] transition-transform duration-300 cursor-pointer"
-                                />
-                                <span className="absolute inset-x-0 bottom-3 text-center text-xs md:text-sm text-amber-50/90 bg-black/50 px-3 py-1 rounded-full mx-auto w-fit">
-                                    Cliquer pour ouvrir la carte en page complète
-                                </span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <>

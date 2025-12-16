@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useGame } from '../context/GameContext';
+import { useGame } from '../Context/GameContext.jsx';
+import { useEffect } from "react";
 import mapBase from '../assets/Carte 1 .png';
 import mapPinocchioDone from '../assets/Carte 2.png';
 import mapAristochatsDone from '../assets/Carte 3.png';
@@ -48,7 +49,13 @@ const zonesConfig = [
 
 const FullMapPage = () => {
     const navigate = useNavigate();
-    const { checkFlag } = useGame();
+    const { setGameFlag, pickupItem, checkFlag, changeRoom, setCloseMap, closeMap, setHasNavigated } = useGame();
+
+    useEffect(() => {
+        if (!checkFlag('map_puzzle_completed')) {
+            navigate('/atelier');
+        }
+    }, []);
 
     // Détermine quelle image de carte afficher selon les flags validés
     const currentMapImage = useMemo(() => {
@@ -183,8 +190,10 @@ const FullMapPage = () => {
                                             type="button"
                                             onClick={() => {
                                                 if (!unlocked) return;
-                                                // Navigation vers une future page de zone (ex: /zone/pinocchio)
                                                 navigate(`/zone/${zone.id}`);
+                                                setCloseMap(true)
+                                                setHasNavigated(false)
+                                                console.log('Navigation vers la zone :', hasNavigated);
                                             }}
                                             className={`
                                                 absolute

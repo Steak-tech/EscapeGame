@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import DialogueManager from './Components/Dialogue/DialogueManager.jsx'
 import DebugPanel from "./Page/DebugPanel.jsx";
-import { GameProvider, useGame } from './context/GameContext';
+import { GameProvider, useGame } from './Context/GameContext.jsx';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import './App.css';
 import { SCENARIO_INTRO } from './assets/Script.js';

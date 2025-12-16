@@ -1,7 +1,7 @@
 import { useGame } from '../context/GameContext';
 
 const DebugPanel = () => {
-    const { inventory, flags, currentRoom, resetGame } = useGame();
+    const { inventory, flags, currentRoom, resetGame, hasNavigated, closeMap } = useGame();
 
     return (
         <div className="fixed top-0 right-0 p-4 bg-black/80 text-green-400 font-mono text-xs z-[9999] border-l border-green-500 max-w-xs">
@@ -22,6 +22,12 @@ const DebugPanel = () => {
           {JSON.stringify(flags, null, 2)}
         </pre>
             </div>
+
+            <div className="border-t border-green-500 mt-2 pt-2">
+                <p>🗺️ closeMap :</p>
+                {JSON.stringify(closeMap, null, 2)}
+            </div>
+
 
             <button
                 onClick={resetGame}

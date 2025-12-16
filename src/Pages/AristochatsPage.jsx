@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useGame } from '../context/GameContext';
+import { useGame } from '../Context/GameContext.jsx';
 import DialogueManager from '../Components/Dialogue/DialogueManager';
 import bgAristochats from '../assets/Aristochats.png';
 import scatCat1 from '../assets/Scat Cat 1.png';

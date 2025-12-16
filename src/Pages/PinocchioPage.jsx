@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useGame } from '../context/GameContext';
+import { useGame } from '../Context/GameContext.jsx';
 import bgPinocchio from '../assets/pinocchio.png';
 import imgInsigne from '../assets/Insigne.png';
 import imgLanterne from '../assets/Lanterne.png';

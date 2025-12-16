@@ -35,6 +35,20 @@ export const GameProvider = ({ children }) => {
     useEffect(() => { localStorage.setItem('disney_flags', JSON.stringify(flags)); }, [flags]);
     useEffect(() => { localStorage.setItem('disney_room', currentRoom); }, [currentRoom]);
 
+    // --- PERSISTANCE DANS LOCALSTORAGE ---
+    useEffect(() => {
+        localStorage.setItem('disney_inventory', JSON.stringify(inventory));
+    }, [inventory]);
+
+    useEffect(() => {
+        localStorage.setItem('disney_flags', JSON.stringify(flags));
+    }, [flags]);
+
+    useEffect(() => {
+        localStorage.setItem('disney_room', currentRoom);
+    }, [currentRoom]);
+
+    // --- ACTIONS (FONCTIONS DE JEU) ---
 
     // --- ACTIONS MODIFIÉES ---
 

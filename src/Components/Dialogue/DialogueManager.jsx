@@ -31,12 +31,6 @@ const DialogueManager = ({ script, onComplete }) => {
 
     // --- GESTION DU CLIC (SUIVANT) ---
     const handleNext = () => {
-        // 1. Si le texte est en train de s'écrire, on l'affiche d'un coup (Skip)
-        if (isTyping) {
-            setIsTyping(false);
-            setDisplayedText(currentLine.text);
-            return;
-        }
 
         // 2. Sinon, on passe à la bulle suivante
         if (currentIndex < script.length - 1) {

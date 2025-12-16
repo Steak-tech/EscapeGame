@@ -1,31 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import DialogueBubble from './DialogueBubble';
-import { gsap } from 'gsap';
-import { useRef } from 'react';
 
 const DialogueManager = ({ script, onComplete }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [displayedText, setDisplayedText] = useState("");
     const [isTyping, setIsTyping] = useState(false);
-    const containerRef = useRef(null);
 
     const currentLine = script[currentIndex];
-
-    // --- ANIMATION GSAP : APPARITION AU DÉBUT ---
-    useEffect(() => {
-        if (!containerRef.current) return;
-
-        gsap.fromTo(
-            containerRef.current,
-            { opacity: 0, y: 40 },
-            {
-                opacity: 1,
-                y: 0,
-                duration: 0.8,
-                ease: 'power3.out',
-            }
-        );
-    }, []);
 
     // --- EFFET MACHINE À ÉCRIRE ---
     useEffect(() => {
@@ -55,27 +36,19 @@ const DialogueManager = ({ script, onComplete }) => {
         if (currentIndex < script.length - 1) {
             setCurrentIndex(prev => prev + 1);
         } else {
-            // 3. Fin du dialogue : on anime la disparition en douceur
-            if (onComplete && containerRef.current) {
-                gsap.to(containerRef.current, {
-                    opacity: 0,
-                    y: 40,
-                    duration: 0.8,
-                    ease: 'power3.in',
-                    onComplete,
-                });
-            } else if (onComplete) {
-                onComplete();
-            }
+            // 3. Fin du dialogue
+            if (onComplete) onComplete();
         }
     };
 
     if (!currentLine) return null;
+
+    console.log(displayedText)
+
     return (
         <div
-            ref={containerRef}
             onClick={handleNext}
-            className="fixed bottom-0 left-0 w-full p-6 pb-12 via-black/90 to-transparent z-50 cursor-pointer from-yellow-700 bg-gradient-to-t"
+            className="fixed bottom-0 left-0 w-full p-6 pb-12 via-black/90 to-transparent z-50 cursor-pointer from-amber-900 bg-gradient-to-t"
         >
             <div className="max-w-4xl mx-auto">
                 <DialogueBubble

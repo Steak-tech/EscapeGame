@@ -1,5 +1,4 @@
 import React from 'react';
-
 const DialogueBubble = ({ text, image, character, side = "left" }) => {
     const isLeft = side === "left";
 
@@ -27,8 +26,8 @@ const DialogueBubble = ({ text, image, character, side = "left" }) => {
 
 
                     <span className="shrink-0 block text-3xl font-bold text-amber-900 drop-shadow-md mb-2">
-            {character}
-        </span>
+                        {character}
+                    </span>
 
                     {/* Texte du dialogue */}
                     {/* 'overflow-y-auto' permet de scroller si le texte est vraiment trop long pour la bulle */}

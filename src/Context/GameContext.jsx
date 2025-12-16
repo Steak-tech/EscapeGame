@@ -1,98 +1,93 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import MapShow from "../Components/MapShow.jsx";
+import DebugPanel from "../Page/DebugPanel.jsx";
+import Notification from "../Components/Notification.jsx"; // ✅ IMPORT
 
-// 1. Création du contexte
+// --- DICTIONNAIRE DES NOMS D'OBJETS ---
+const ITEMS_NAMES = {
+    carte_complete: "Carte du Parc",
+};
+
 const GameContext = createContext();
 
-// 2. Le Provider (Le composant qui enveloppe tout le jeu)
 export const GameProvider = ({ children }) => {
 
-    // --- ÉTATS (STATE) ---
-
-    // Inventaire : Liste d'objets (ex: ['cle_rouillee', 'lampe_uv'])
+    // ... tes états existants (inventory, flags, currentRoom...) ...
     const [inventory, setInventory] = useState(() => {
-        // On essaie de charger la sauvegarde locale au démarrage
         const saved = localStorage.getItem('disney_inventory');
         return saved ? JSON.parse(saved) : [];
     });
-
-    // Flags : Objet pour suivre la progression (ex: { intro_vue: true, porte_ouverte: false })
     const [flags, setFlags] = useState(() => {
         const saved = localStorage.getItem('disney_flags');
         return saved ? JSON.parse(saved) : {};
     });
-
-    // Salle actuelle
     const [currentRoom, setCurrentRoom] = useState(() => {
         return localStorage.getItem('disney_room') || 'intro';
     });
+    const [hasNavigated, setHasNavigated] = useState(false);
+    const [closeMap, setCloseMap] = useState(false);
+
+    // --- ✅ NOUVEL ÉTAT POUR LA NOTIFICATION ---
+    const [notificationMessage, setNotificationMessage] = useState(null);
+
+    // ... tes useEffects de sauvegarde (inchangés) ...
+    useEffect(() => { localStorage.setItem('disney_inventory', JSON.stringify(inventory)); }, [inventory]);
+    useEffect(() => { localStorage.setItem('disney_flags', JSON.stringify(flags)); }, [flags]);
+    useEffect(() => { localStorage.setItem('disney_room', currentRoom); }, [currentRoom]);
 
 
-    // --- ACTIONS (FONCTIONS DE JEU) ---
+    // --- ACTIONS MODIFIÉES ---
 
-    // Ajouter un objet (seulement s'il n'est pas déjà là)
+    const editCloseMap = (value) => { setCloseMap(value); }
+
     const pickupItem = (itemKey) => {
         if (!inventory.includes(itemKey)) {
             setInventory((prev) => [...prev, itemKey]);
             console.log(`🎁 Objet récupéré : ${itemKey}`);
-            return true; // Succès
+
+            const prettyName = ITEMS_NAMES[itemKey] || itemKey;
+            setNotificationMessage(prettyName);
+
+            return true;
         }
-        return false; // Déjà possédé
+        return false;
     };
 
-    // Retirer/Utiliser un objet
-    const useItem = (itemKey) => {
-        setInventory((prev) => prev.filter((item) => item !== itemKey));
-        console.log(`🗑️ Objet utilisé/perdu : ${itemKey}`);
-    };
-
-    // Vérifier si on a un objet
+    // ... autres fonctions (useItem, hasItem, setGameFlag...) inchangées ...
+    const useItem = (itemKey) => { setInventory((prev) => prev.filter((item) => item !== itemKey)); };
     const hasItem = (itemKey) => inventory.includes(itemKey);
-
-    // Définir une étape de l'histoire (Flag)
-    const setGameFlag = (flagKey, value = true) => {
-        setFlags((prev) => ({ ...prev, [flagKey]: value }));
-        console.log(`🚩 Progression : ${flagKey} = ${value}`);
-    };
-
-    // Vérifier une étape (ex: checkFlag('tuto_fini'))
+    const setGameFlag = (flagKey, value = true) => { setFlags((prev) => ({ ...prev, [flagKey]: value })); };
     const checkFlag = (flagKey) => !!flags[flagKey];
+    const changeRoom = (roomId) => { setCurrentRoom(roomId); };
+    const resetGame = () => { setInventory([]); setFlags({}); setCurrentRoom('intro'); localStorage.clear(); };
+    const navigateOnce = () => { if (!hasNavigated) { setHasNavigated(true); return true; } return false; }
+    const editNavigation = (value) => { setHasNavigated(value); }
+    const resetNavigation = () => { setHasNavigated(false); }
 
-    // Changer de salle
-    const changeRoom = (roomId) => {
-        setCurrentRoom(roomId);
-        console.log(`🚪 Changement de salle vers : ${roomId}`);
-    };
 
-    // Reset complet (Nouvelle partie)
-    const resetGame = () => {
-        setInventory([]);
-        setFlags({});
-        setCurrentRoom('intro');
-        localStorage.clear();
-    };
-
-    // On expose tout ça au reste de l'app
     const value = {
-        inventory,
-        flags,
-        currentRoom,
-        pickupItem,
-        useItem,
-        hasItem,
-        setGameFlag,
-        checkFlag,
-        changeRoom,
-        resetGame
+        inventory, flags, currentRoom, pickupItem, useItem, hasItem, setGameFlag, checkFlag, changeRoom, resetGame, navigateOnce, hasNavigated,setHasNavigated, resetNavigation, editNavigation, closeMap, setCloseMap, editCloseMap,
     };
 
-    return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
+    return (
+        <GameContext.Provider value={value}>
+
+            {/* ✅ AFFICHAGE DE LA NOTIFICATION AU DESSUS DE TOUT */}
+            <Notification
+                message={notificationMessage}
+                onClose={() => setNotificationMessage(null)}
+            />
+
+            {hasItem('carte_complete') &&
+                <MapShow />
+            }
+            {children}
+        </GameContext.Provider>
+    );
 };
 
-// 3. Le Hook personnalisé (pour utiliser le contexte facilement)
 export const useGame = () => {
     const context = useContext(GameContext);
-    if (!context) {
-        throw new Error("useGame doit être utilisé à l'intérieur de GameProvider");
-    }
+    if (!context) { throw new Error("useGame doit être utilisé à l'intérieur de GameProvider"); }
     return context;
 };

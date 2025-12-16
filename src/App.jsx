@@ -9,6 +9,8 @@ import { SCENARIO_INTRO } from './assets/Script.js';
 import MapPuzzle from './Components/MapPuzzle.jsx';
 import FullMapPage from './Pages/FullMapPage.jsx';
 import PinocchioPage from './Pages/PinocchioPage.jsx';
+import AristochatsPage from './Pages/AristochatsPage.jsx';
+import LionPage from './Pages/LionPage.jsx';
 import DoorTransition from "./Page/DoorTransition.jsx";
 
 export default function App() {
@@ -44,7 +46,7 @@ export default function App() {
         return (
             <div>
                 <img src="src/assets/AtelierV2.png" alt="Background" className="w-full h-full object-cover fixed top-0 left-0 z-0" />
-                {showDialogue && <DialogueManager script={SCENARIO_INTRO} onComplete={handleDialogueEnd} />}
+                {showDialogue && <DialogueManager script={SCENARIO_INTRO} onComplete={handleDialogueEnd} backgroundColor="orange" />}
                 <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-10">
                     <button
                         onClick={() => {
@@ -79,6 +81,8 @@ export default function App() {
                 <Route path="/atelier" element={<Intro />} />
                 <Route path="/map" element={<FullMapPage />} />
                 <Route path="/zone/pinocchio" element={<PinocchioPage />} />
+                <Route path="/zone/aristochats" element={<AristochatsPage />} />
+                <Route path="/zone/lion" element={<LionPage />} />
             </Routes>
         </GameProvider>
     )

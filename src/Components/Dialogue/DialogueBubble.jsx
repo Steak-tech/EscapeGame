@@ -1,4 +1,6 @@
 import React from 'react';
+import bulleImage from '../../assets/Bulle.png';
+
 const DialogueBubble = ({ text, image, character, side = "left" }) => {
     const isLeft = side === "left";
 
@@ -17,7 +19,7 @@ const DialogueBubble = ({ text, image, character, side = "left" }) => {
 
                 {/* 1. Image de fond */}
                 <img
-                    src='src/assets/bulle.png'
+                    src={bulleImage}
                     alt='bulle dialogue'
                     className='w-[60%] h-[300px] object-fill'
                 />
@@ -31,7 +33,7 @@ const DialogueBubble = ({ text, image, character, side = "left" }) => {
 
                     {/* Texte du dialogue */}
                     {/* 'overflow-y-auto' permet de scroller si le texte est vraiment trop long pour la bulle */}
-                    <p className="text-grey-900 text-sm md:text-base leading-relaxed font-sans drop-shadow-sm overflow-y-auto pr-2">
+                    <p className="text-black text-sm md:text-base leading-relaxed font-sans drop-shadow-sm overflow-y-auto pr-2">
                         {text}
                     </p>
 

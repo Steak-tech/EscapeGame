@@ -135,7 +135,7 @@ const PinocchioPage = () => {
                 .replace(/[^A-Z0-9]/g, '') // enlève ponctuation et espaces
                 .trim();
 
-        const okVrai = normalize(wordVrai) === 'VRAI';
+        const okVrai = normalize(wordVrai) === 'VIVANT';
         const okConscience = normalize(wordConscience) === 'CONSCIENCE';
         const okVerite = normalize(wordVerite) === 'VERITE';
         const okCourage = normalize(wordCourage) === 'COURAGE';

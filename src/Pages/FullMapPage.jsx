@@ -1,6 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGame } from '../context/GameContext';
+import mapBase from '../assets/Carte 1 .png';
+import mapPinocchioDone from '../assets/Carte 2.png';
+import mapAristochatsDone from '../assets/Carte 3.png';
+import mapLionDone from '../assets/Carte 4.png';
+import mapAllDone from '../assets/Carte 5.png';
 
 const zonesConfig = [
     {
@@ -44,6 +49,35 @@ const zonesConfig = [
 const FullMapPage = () => {
     const navigate = useNavigate();
     const { checkFlag } = useGame();
+
+    // Détermine quelle image de carte afficher selon les flags validés
+    const currentMapImage = useMemo(() => {
+        const pinocchioDone = checkFlag('zone_pinocchio_done');
+        const aristochatsDone = checkFlag('zone_aristochats_done');
+        const lionDone = checkFlag('zone_lion_done');
+        const walleDone = checkFlag('zone_walle_done');
+
+        // Compte le nombre de zones complétées
+        const completedCount = [pinocchioDone, aristochatsDone, lionDone, walleDone].filter(Boolean).length;
+
+        // Sélectionne l'image selon la progression
+        if (walleDone) {
+            // Toutes les zones sont complétées
+            return mapAllDone;
+        } else if (lionDone) {
+            // 3 zones complétées (Pinocchio, Aristochats, Lion)
+            return mapLionDone;
+        } else if (aristochatsDone) {
+            // 2 zones complétées (Pinocchio, Aristochats)
+            return mapAristochatsDone;
+        } else if (pinocchioDone) {
+            // 1 zone complétée (Pinocchio)
+            return mapPinocchioDone;
+        } else {
+            // Aucune zone complétée
+            return mapBase;
+        }
+    }, [checkFlag]);
 
     const isZoneUnlocked = (zone) => {
         // On suppose que chaque zone peut être marquée comme "faite" via un flag :
@@ -130,11 +164,12 @@ const FullMapPage = () => {
                             <div className="absolute -inset-3 rounded-[2rem] bg-gradient-to-br from-amber-500/40 via-transparent to-emerald-500/30 blur-xl opacity-70" />
 
                             <div className="relative rounded-[2rem] overflow-hidden border border-amber-500/70 shadow-[0_0_40px_rgba(251,191,36,0.45)] bg-slate-900/70 backdrop-blur">
-                                {/* Carte */}
+                                {/* Carte - change selon les flags validés */}
                                 <img
-                                    src="src/assets/MapStudios.png"
+                                    src={currentMapImage}
                                     alt="Carte complète des Walt Disney Studios"
-                                    className="w-full h-full max-h-[70vh] object-contain"
+                                    className="w-full h-full max-h-[70vh] object-contain transition-opacity duration-500"
+                                    key={currentMapImage} // Force le re-render quand l'image change
                                 />
 
                                 {/* Zones cliquables de la carte */}
@@ -162,8 +197,7 @@ const FullMapPage = () => {
                                                 width: zone.size?.width ?? '16%',
                                                 height: zone.size?.height ?? '18%',
                                                 borderRadius: zone.radius ?? '0px',
-                                                // TEMP: fond rouge semi-transparent pour ajuster les zones
-                                                backgroundColor: 'rgba(255,0,0,0.35)',
+                                                backgroundColor: 'transparent',
                                             }}
                                         >
                                             {/* Zone cliquable (fond rouge temporaire pour le réglage des tailles) */}

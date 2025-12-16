@@ -8,6 +8,7 @@ import './App.css';
 import { SCENARIO_INTRO } from './assets/Script.js';
 import MapPuzzle from './Components/MapPuzzle.jsx';
 import FullMapPage from './Pages/FullMapPage.jsx';
+import DoorTransition from "./Page/DoorTransition.jsx";
 
 export default function App() {
     const [showDialogue, setShowDialogue] = useState(true);
@@ -73,7 +74,8 @@ export default function App() {
                 <DebugPanel />
             </div>
             <Routes>
-                <Route path="/" element={<Intro />} />
+                <Route path="/" element={<DoorTransition />} />
+                <Route path="/atelier" element={<Intro />} />
                 <Route path="/map" element={<FullMapPage />} />
             </Routes>
         </GameProvider>

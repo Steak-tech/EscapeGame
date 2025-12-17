@@ -12,6 +12,7 @@ import PinocchioPage from './Pages/PinocchioPage.jsx';
 import AristochatsPage from './Pages/AristochatsPage.jsx';
 import LionPage from './Pages/LionPage.jsx';
 import WallEPage from './Pages/WallEPage.jsx';
+import ChateauPage from './Pages/ChateauPage.jsx';
 import DoorTransition from "./Page/DoorTransition.jsx";
 
 export default function App() {
@@ -50,6 +51,7 @@ export default function App() {
     return (
         <GameProvider>
             <div className="App">
+
             </div>
             <Routes>
                 <Route path="/" element={<DoorTransition />} />
@@ -59,6 +61,7 @@ export default function App() {
                 <Route path="/zone/aristochats" element={<AristochatsPage />} />
                 <Route path="/zone/lion" element={<LionPage />} />
                 <Route path="/zone/walle" element={<WallEPage />} />
+                <Route path="/zone/chateau" element={<ChateauPage />} />
             </Routes>
         </GameProvider>
     )

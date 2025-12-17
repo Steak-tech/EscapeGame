@@ -1,17 +1,174 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGame } from '../Context/GameContext.jsx';
 import bgWallE from '../assets/Decor WallE.png';
+import BulleZazu from '../assets/BulleZazu.png';
+import Walle1 from '../assets/Walle1.png';
+import Walle2 from '../assets/Walle2.png';
+import Walle3 from '../assets/Walle3.png';
+import Walle4 from '../assets/Walle4.png';
+import Walle5 from '../assets/Walle5.png';
 
-// Configuration de la zone cliquable (rouge temporairement pour le placement)
 const clickableZone = {
     position: { top: '70%', left: '53%' }, // À ajuster selon vos besoins
     size: { width: '360px', height: '200px' },
 };
 
+// --- Dialogue dédié WALL·E (même système que PinocchioPage) ---
+const WalleDialogue = ({ script, onComplete }) => {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [displayedText, setDisplayedText] = useState('');
+    const [isTyping, setIsTyping] = useState(false);
+
+    const currentLine = script[currentIndex];
+
+    // Retour à la ligne automatique
+    const wrapText = (text, maxCharsPerLine = 55) => {
+        if (!text) return '';
+        const words = text.split(' ');
+        const lines = [];
+        let currentLineText = '';
+
+        words.forEach((word) => {
+            const tentative = currentLineText ? `${currentLineText} ${word}` : word;
+            if (tentative.length > maxCharsPerLine) {
+                if (currentLineText) lines.push(currentLineText);
+                currentLineText = word;
+            } else {
+                currentLineText = tentative;
+            }
+        });
+
+        if (currentLineText) lines.push(currentLineText);
+        return lines.join('\n');
+    };
+
+    const fullText = currentLine ? wrapText(currentLine.text) : '';
+
+    // Effet machine à écrire
+    useEffect(() => {
+        if (!currentLine) return;
+
+        setDisplayedText('');
+        setIsTyping(true);
+
+        let charIndex = 0;
+        const typingInterval = setInterval(() => {
+            if (charIndex <= fullText.length) {
+                setDisplayedText(fullText.slice(0, charIndex));
+                charIndex++;
+            } else {
+                setIsTyping(false);
+                clearInterval(typingInterval);
+            }
+        }, 30);
+
+        return () => clearInterval(typingInterval);
+    }, [currentIndex, currentLine, fullText]);
+
+    const handleNext = () => {
+        // Spam clic : terminer immédiatement la phrase en cours
+        if (isTyping && currentLine) {
+            if (displayedText !== fullText) {
+                setDisplayedText(fullText);
+            }
+            setIsTyping(false);
+            return;
+        }
+
+        // Sinon, passer à la réplique suivante
+        if (currentIndex < script.length - 1) {
+            setCurrentIndex((prev) => prev + 1);
+        } else if (onComplete) {
+            onComplete();
+        }
+    };
+
+    if (!currentLine) return null;
+
+    return (
+        <div
+            onClick={handleNext}
+            className="fixed bottom-0 left-0 w-full px-4 pb-4 pt-2 z-50 cursor-pointer via-black/90 to-transparent from-amber-900 bg-gradient-to-t"
+        >
+            <div className="max-w-5xl mx-auto flex w-full items-end gap-6">
+                {/* Avatar WALL·E (même placement que Pinocchio/Lion) */}
+                <div
+                    className="relative flex-none transform translate-y-15 -translate-x-10"
+                    style={{ width: '400px', height: '430px' }}
+                >
+                    <img
+                        src={currentLine.image}
+                        alt={currentLine.character}
+                        className="w-full h-full object-contain drop-shadow-[0_8px_20px_rgba(0,0,0,0.7)]"
+                    />
+                </div>
+
+                {/* Bulle de dialogue (même image BulleZazu et même position) */}
+                <div className="relative flex-none mb-12 flex justify-start transform -translate-y-0 -translate-x-130">
+                    <img
+                        src={BulleZazu}
+                        alt="Bulle de dialogue"
+                        style={{ width: '1300px', maxWidth: '100%', height: 'auto' }}
+                        className="object-contain"
+                    />
+
+                    {/* Contenu texte dans la bulle */}
+                    <div className="absolute top-[10%] bottom-[18%] left-[35%] right-[14%] flex flex-col justify-center py-2">
+                        <span className="shrink-0 block text-2xl md:text-3xl font-bold text-amber-900 drop-shadow-md mb-2">
+                            {currentLine.character}
+                        </span>
+                        <p className="text-black text-sm md:text-base leading-relaxed font-sans drop-shadow-sm overflow-y-auto whitespace-pre-line">
+                            {displayedText}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// Petit scénario de dialogue d'intro pour la zone WALL·E
+const SCENARIO_WALLE = [
+    {
+        id: 1,
+        character: "WALL·E",
+        image: Walle1,
+        text: "Bip... bip... Ici, tout ce qui brillait autrefois a été oublié sous des tonnes de métal et de poussière.",
+        side: "right",
+    },
+    {
+        id: 2,
+        character: "WALL·E",
+        image: Walle2,
+        text: "Pourtant, dans ce ciel figé, une constellation garde la mémoire du château de Disney, comme un souvenir que personne n’a réussi à effacer.",
+        side: "right",
+    },
+    {
+        id: 3,
+        character: "WALL·E",
+        image: Walle3,
+        text: "En reliant les bonnes étoiles, tu pourras reconstruire son contour exact… et réactiver une dernière étincelle de magie.",
+        side: "right",
+    },
+    {
+        id: 4,
+        character: "WALL·E",
+        image: Walle4,
+        text: "Mais attention, il suffit d'une étoile manquante pour tout effondrer.",
+        side: "right",
+    },
+    {
+        id: 5,
+        character: "WALL·E",
+        image: Walle5,
+        text: "Quand tu auras relié toutes les étoiles sans erreur, tu pourras reconstruire le château de Disney… et rallumer une dernière étincelle de magie.",
+        side: "right",
+    },
+];
+
 // Configuration des points d'étoiles pour la constellation
-// Positions exactes selon le SVG de référence pour reproduire le contour du château
-// Décalées vers le haut pour laisser de l'espace en bas pour les étoiles aléatoires
+
 const starPoints = [
     // Base gauche
     { id: 1, x: 50, y: 200 },   // Coin bas gauche de la base (décalé de 30px vers le haut)
@@ -22,16 +179,16 @@ const starPoints = [
     { id: 4, x: 80, y: 120 },   // Début rectangle tour gauche (décalé de 30px vers le haut)
     { id: 5, x: 100, y: 90 },   // Sommet pointe tour gauche (décalé de 30px vers le haut)
     { id: 6, x: 120, y: 120 },  // Fin rectangle tour gauche (décalé de 30px vers le haut)
-    { id: 7, x: 120, y: 200 },  // Bas tour gauche (décalé de 30px vers le haut)
+    { id: 7, x: 120, y: 170 },  // Bas tour gauche (décalé de 30px vers le haut)
     // Connexion vers tour centrale
-    { id: 8, x: 170, y: 200 },  // Connexion bas vers tour centrale (décalé de 30px vers le haut)
+    { id: 8, x: 170, y: 170 },  // Connexion bas vers tour centrale (décalé de 30px vers le haut)
     // Tour centrale - contour
     { id: 9, x: 170, y: 70 },   // Début rectangle tour centrale (décalé de 30px vers le haut)
     { id: 10, x: 200, y: 30 },  // Sommet pointe tour centrale (décalé de 30px vers le haut)
     { id: 11, x: 230, y: 70 },  // Fin rectangle tour centrale (décalé de 30px vers le haut)
-    { id: 12, x: 230, y: 200 }, // Bas tour centrale (décalé de 30px vers le haut)
+    { id: 12, x: 230, y: 170 }, // Bas tour centrale (décalé de 30px vers le haut)
     // Connexion vers tour droite
-    { id: 13, x: 280, y: 200 }, // Connexion bas vers tour droite (décalé de 30px vers le haut)
+    { id: 13, x: 280, y: 170 }, // Connexion bas vers tour droite (décalé de 30px vers le haut)
     // Tour droite - contour
     { id: 14, x: 280, y: 120 }, // Début rectangle tour droite (décalé de 30px vers le haut)
     { id: 15, x: 300, y: 90 },  // Sommet pointe tour droite (décalé de 30px vers le haut)
@@ -112,8 +269,16 @@ const WallEPage = () => {
     const [connectedPoints, setConnectedPoints] = useState([]);
     const [currentHover, setCurrentHover] = useState(null);
     const [showVictory, setShowVictory] = useState(false);
+    const [showDialogue, setShowDialogue] = useState(true);
     const navigate = useNavigate();
-    const { setGameFlag } = useGame();
+    const { setGameFlag, checkFlag } = useGame();
+
+    // Vérifier que Pinocchio, Aristochats et Lion sont complétés avant d'accéder à WALL·E
+    useEffect(() => {
+        if (!checkFlag('zone_pinocchio_done') || !checkFlag('zone_aristochats_done') || !checkFlag('zone_lion_done')) {
+            navigate('/map');
+        }
+    }, [checkFlag, navigate]);
 
     // Fonction pour obtenir l'ordre d'un point dans la séquence
     const getPointOrder = (starId) => {
@@ -215,6 +380,10 @@ const WallEPage = () => {
         setCurrentHover(null);
     };
 
+    const handleDialogueEnd = () => {
+        setShowDialogue(false);
+    };
+
     return (
         <div
             className="relative w-full h-screen overflow-hidden bg-black text-amber-50"
@@ -230,22 +399,32 @@ const WallEPage = () => {
             {/* Voile sombre pour lisibilité */}
             <div className="absolute inset-0 bg-black/40" />
 
-            {/* Zone cliquable (transparente) */}
-            <button
-                type="button"
-                onClick={handleZoneClick}
-                className="absolute focus:outline-none focus-visible:outline-none bg-transparent border-none"
-                style={{
-                    top: clickableZone.position.top,
-                    left: clickableZone.position.left,
-                    transform: 'translate(-50%, -50%)',
-                    width: clickableZone.size.width,
-                    height: clickableZone.size.height,
-                    cursor: 'pointer',
-                }}
-            >
-                {/* Zone cliquable transparente */}
-            </button>
+            {/* Dialogue d'intro WALL·E (même système que Pinocchio) */}
+            {showDialogue && (
+                <WalleDialogue
+                    script={SCENARIO_WALLE}
+                    onComplete={handleDialogueEnd}
+                />
+            )}
+
+            {/* Zone cliquable (transparente) uniquement après le dialogue */}
+            {!showDialogue && (
+                <button
+                    type="button"
+                    onClick={handleZoneClick}
+                    className="absolute focus:outline-none focus-visible:outline-none bg-transparent border-none"
+                    style={{
+                        top: clickableZone.position.top,
+                        left: clickableZone.position.left,
+                        transform: 'translate(-50%, -50%)',
+                        width: clickableZone.size.width,
+                        height: clickableZone.size.height,
+                        cursor: 'pointer',
+                    }}
+                >
+                    {/* Zone cliquable transparente */}
+                </button>
+            )}
 
             {/* Popup de la constellation */}
             {showPopup && (

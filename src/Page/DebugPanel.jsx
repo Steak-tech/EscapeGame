@@ -1,4 +1,4 @@
-import { useGame } from '../context/GameContext';
+import { useGame } from '../Context/GameContext';
 
 const DebugPanel = () => {
     const { inventory, flags, currentRoom, resetGame, hasNavigated, closeMap } = useGame();
@@ -19,8 +19,8 @@ const DebugPanel = () => {
             <div className="mt-2">
                 <p>🚩 Flags :</p>
                 <pre className="text-[10px] text-white/80">
-          {JSON.stringify(flags, null, 2)}
-        </pre>
+                    {JSON.stringify(flags, null, 2)}
+                </pre>
             </div>
 
             <div className="border-t border-green-500 mt-2 pt-2">

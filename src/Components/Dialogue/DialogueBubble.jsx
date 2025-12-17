@@ -1,7 +1,16 @@
 import React from 'react';
 import bulleImage from '../../assets/Bulle.png';
 
-const DialogueBubble = ({ text, image, character, side = "left" }) => {
+const DialogueBubble = ({
+    text,
+    image,
+    character,
+    side = "left",
+    bubbleImage = bulleImage,
+    avatarClassName,
+    bubbleClassName,
+    contentClassName,
+}) => {
     const isLeft = side === "left";
 
     return (
@@ -9,8 +18,8 @@ const DialogueBubble = ({ text, image, character, side = "left" }) => {
 
             {/* AVATAR */}
             <div>
-                <div className="h-100 absolute bottom-[-60px]">
-                    <img src={image} alt={character} className="w-full h-full " />
+                <div className={avatarClassName || "h-100 absolute bottom-[-60px]"}>
+                    <img src={image} alt={character} className="w-full h-full" />
                 </div>
             </div>
 
@@ -19,12 +28,12 @@ const DialogueBubble = ({ text, image, character, side = "left" }) => {
 
                 {/* 1. Image de fond */}
                 <img
-                    src={bulleImage}
+                    src={bubbleImage}
                     alt='bulle dialogue'
-                    className='w-[60%] h-[300px] object-fill'
+                    className={bubbleClassName || 'w-[60%] h-[300px] object-fill'}
                 />
 
-                <div className="absolute top-0 left-85 w-[60%] h-[300px] flex flex-col justify-start p-8 sm:p-12">
+                <div className={contentClassName || "absolute top-0 left-85 w-[60%] h-[300px] flex flex-col justify-start p-8 sm:p-12"}>
 
 
                     <span className="shrink-0 block text-3xl font-bold text-amber-900 drop-shadow-md mb-2">

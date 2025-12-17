@@ -64,6 +64,10 @@ const DialogueManager = ({ script, onComplete, backgroundColor = null }) => {
                     key={currentLine.id}
                     character={currentLine.character}
                     image={currentLine.image}
+                    bubbleImage={currentLine.bubbleImage}
+                    avatarClassName={currentLine.avatarClassName}
+                    bubbleClassName={currentLine.bubbleClassName}
+                    contentClassName={currentLine.contentClassName}
                     side={currentLine.side}
                     text={displayedText}
                 />

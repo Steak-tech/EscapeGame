@@ -45,6 +45,15 @@ const zonesConfig = [
         radius: '50px',
         order: 3,
     },
+    {
+        id: 'chateau',
+        label: 'Château de Disney',
+        description: 'Le cœur du parc, où la magie se rassemble une dernière fois.',
+        position: { top: '50%', left: '50%' },
+        size: { width: '20%', height: '20%' },
+        radius: '40px',
+        order: 4,
+    },
 ];
 
 const FullMapPage = () => {
@@ -183,6 +192,7 @@ const FullMapPage = () => {
                                 {zonesConfig.map((zone) => {
                                     const unlocked = isZoneUnlocked(zone);
                                     const done = checkFlag(`zone_${zone.id}_done`);
+                                    const isChateau = zone.id === 'chateau';
 
                                     return (
                                         <button
@@ -207,9 +217,10 @@ const FullMapPage = () => {
                                                 height: zone.size?.height ?? '18%',
                                                 borderRadius: zone.radius ?? '0px',
                                                 backgroundColor: 'transparent',
+                                                border: 'none',
                                             }}
                                         >
-                                            {/* Zone cliquable (fond rouge temporaire pour le réglage des tailles) */}
+                                            {/* Zone cliquable (totalement invisible) */}
                                         </button>
                                     );
                                 })}

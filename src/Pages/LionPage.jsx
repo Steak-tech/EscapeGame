@@ -3,8 +3,162 @@ import { useNavigate } from 'react-router-dom';
 import { useGame } from '../Context/GameContext.jsx';
 import { gsap } from 'gsap';
 import bgLion from '../assets/RoiLion.png';
+import Zazu1 from '../assets/Zazu1.png';
+import Zazu2 from '../assets/Zazu2.png';
+import Zazu3 from '../assets/Zazu3.png';
+import Zazu4 from '../assets/Zazu4.png';
+import Zazu5 from '../assets/Zazu5.png';
+import BulleZazu from '../assets/BulleZazu.png';
+
 
 const SECRET_CODE = 'ROIS';
+
+// Système de dialogue dédié à la page Roi Lion (avec effet machine à écrire)
+const LionDialogue = ({ script, onComplete }) => {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [displayedText, setDisplayedText] = useState("");
+    const [isTyping, setIsTyping] = useState(false);
+
+    const currentLine = script[currentIndex];
+
+    // Fonction utilitaire : retour à la ligne automatique après un certain nombre de caractères
+    const wrapText = (text, maxCharsPerLine = 55) => {
+        if (!text) return "";
+        const words = text.split(" ");
+        const lines = [];
+        let currentLineText = "";
+
+        words.forEach((word) => {
+            const tentative = currentLineText ? `${currentLineText} ${word}` : word;
+            if (tentative.length > maxCharsPerLine) {
+                if (currentLineText) lines.push(currentLineText);
+                currentLineText = word;
+            } else {
+                currentLineText = tentative;
+            }
+        });
+
+        if (currentLineText) lines.push(currentLineText);
+        return lines.join("\n");
+    };
+
+    const fullText = currentLine ? wrapText(currentLine.text) : "";
+
+    // Effet machine à écrire
+    useEffect(() => {
+        if (!currentLine) return;
+
+        setDisplayedText("");
+        setIsTyping(true);
+
+        let charIndex = 0;
+        const typingInterval = setInterval(() => {
+            if (charIndex <= fullText.length) {
+                setDisplayedText(fullText.slice(0, charIndex));
+                charIndex++;
+            } else {
+                setIsTyping(false);
+                clearInterval(typingInterval);
+            }
+        }, 30);
+
+        return () => clearInterval(typingInterval);
+    }, [currentIndex, currentLine, fullText]);
+
+    const handleNext = () => {
+        // Si on clique pendant que ça tape, on affiche directement tout le texte
+        if (isTyping && currentLine) {
+            if (displayedText !== fullText) {
+                setDisplayedText(fullText);
+            }
+            setIsTyping(false);
+            return;
+        }
+
+        // Sinon, on passe à la ligne suivante
+        if (currentIndex < script.length - 1) {
+            setCurrentIndex((prev) => prev + 1);
+        } else if (onComplete) {
+            onComplete();
+        }
+    };
+
+    if (!currentLine) return null;
+
+    return (
+        <div
+            onClick={handleNext}
+            className="fixed bottom-0 left-0 w-full px-4 pb-4 pt-2 z-50 cursor-pointer via-black/90 to-transparent from-amber-900 bg-gradient-to-t"
+        >
+            <div className="max-w-5xl mx-auto flex w-full items-end gap-6">
+                {/* AVATAR ZAZU À GAUCHE (taille fixe, ne rétrécit plus) */}
+                <div
+                    className="relative flex-none transform translate-y-15 -translate-x-10"
+                    style={{ width: '400px', height: '430px' }}
+                >
+                    <img
+                        src={currentLine.image}
+                        alt={currentLine.character}
+                        className="w-full h-full object-contain drop-shadow-[0_8px_20px_rgba(0,0,0,0.7)]"
+                    />
+                </div>
+
+                {/* BULLE DE DIALOGUE SPÉCIALE ZAZU (position personnalisée) */}
+                <div className="relative flex-none mb-12 flex justify-start transform -translate-y-0 -translate-x-130">
+                    {/* Image de la bulle */}
+                    <img
+                        src={BulleZazu}
+                        alt="Bulle de dialogue"
+                        style={{ width: '1300px', maxWidth: '100%', height: 'auto' }}
+                        className="object-contain"
+                    />
+
+                    {/* Contenu texte dans la bulle (positionné à l'intérieur du parchemin) */}
+                    <div className="absolute top-[10%] bottom-[18%] left-[35%] right-[14%] flex flex-col justify-center py-2">
+                        <span className="shrink-0 block text-2xl md:text-3xl font-bold text-amber-900 drop-shadow-md mb-2">
+                            {currentLine.character}
+                        </span>
+                        <p className="text-black text-sm md:text-base leading-relaxed font-sans drop-shadow-sm overflow-y-auto whitespace-pre-line">
+                            {displayedText}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// Petit scénario de dialogue d'intro pour la zone Roi Lion
+const SCENARIO_LION = [
+    {
+        id: 1,
+        character: "Zazu",
+        image: Zazu1,
+        text: "Regarde bien la savane... Tout semble figé, mais les traces du passé sont encore là.",
+        side: "left",
+    },
+    {
+        id: 2,
+        character: "Zazu",
+        image: Zazu2,
+        text: "Les rochers, les terres brûlées, les silhouettes dans l’ombre... Chaque lieu a gardé un morceau de l’histoire du roi.",
+        side: "left",
+    },
+    {
+        id: 3,
+        character: "Zazu",
+        image: Zazu3,
+        text: "Clique sur les zones marquantes du royaume. Elles te révéleront des lettres et des indices.",
+        side: "left",
+    },
+    {
+        id: 4,
+        character: "Zazu",
+        image: Zazu4,
+        text: "Assemble-les dans le bon ordre pour retrouver le titre de celui qui doit veiller sur la savane...",
+        side: "left",
+    },
+];
 
 // Configuration des positions des lettres du code révélé (en haut à droite)
 // Tu peux ajuster la position de chaque lettre individuellement
@@ -47,6 +201,7 @@ const zoneLetters = {
 };
 
 const LionPage = () => {
+    const [showDialogue, setShowDialogue] = useState(true);
     const [activeLetter, setActiveLetter] = useState(null);
     const [showLetter, setShowLetter] = useState(false);
     const [currentCode, setCurrentCode] = useState('');
@@ -60,16 +215,25 @@ const LionPage = () => {
     const navigate = useNavigate();
     const { setGameFlag, checkFlag } = useGame();
 
-    // Restaurer l'état du code trouvé au chargement de la page
+    // Vérifier que Pinocchio et Aristochats sont complétés avant d'accéder au Roi Lion
     useEffect(() => {
-        if (checkFlag('zone_lion_done')) {
-            setCodeSolved(true);
-            setShowCodeReveal(true);
+        if (!checkFlag('zone_pinocchio_done') || !checkFlag('zone_aristochats_done')) {
+            navigate('/map');
         }
-    }, [checkFlag]);
+    }, [checkFlag, navigate]);
+
+    const handleDialogueEnd = () => {
+        setShowDialogue(false);
+    };
 
     const handleZoneClick = (zoneId) => {
-        if (codeSolved) return; // une fois le code trouvé, on ne perturbe plus la séquence
+        // Permettre de refaire l'énigme même après l'avoir résolue
+        // Si on clique sur une zone après avoir résolu, on réinitialise
+        if (codeSolved) {
+            setCodeSolved(false);
+            setShowCodeReveal(false);
+            setCurrentCode('');
+        }
 
         const value = zoneLetters[zoneId];
         if (!value) {
@@ -98,6 +262,16 @@ const LionPage = () => {
                 setCodeSolved(true);
                 setShowCodeReveal(true);
                 setGameFlag('zone_lion_done', true);
+
+                // Faire disparaître le code après 5 secondes
+                setTimeout(() => {
+                    setShowCodeReveal(false);
+                }, 5000);
+
+                // Rediriger vers la map après 10 secondes
+                setTimeout(() => {
+                    navigate('/map');
+                }, 10000);
             }
 
             return next;
@@ -317,8 +491,16 @@ const LionPage = () => {
 
             {/* Contenu principal */}
             <div className="relative z-10 w-full h-full">
-                {/* 10 zones cliquables (invisibles une fois le placement terminé) */}
-                {lionZones.map((zone) => (
+                {/* Dialogue d'intro spécifique au Roi Lion */}
+                {showDialogue && (
+                    <LionDialogue
+                        script={SCENARIO_LION}
+                        onComplete={handleDialogueEnd}
+                    />
+                )}
+
+                {/* 11 zones cliquables (activées seulement après le dialogue) */}
+                {!showDialogue && lionZones.map((zone) => (
                     <button
                         key={zone.id}
                         type="button"
@@ -335,7 +517,7 @@ const LionPage = () => {
                             outline: 'none',
                         }}
                     >
-                        {/* Zone cliquable (visuelle en rouge pour placement) */}
+                        {/* Zone cliquable (invisible) */}
                     </button>
                 ))}
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGame } from '../Context/GameContext.jsx';
 import DialogueManager from '../Components/Dialogue/DialogueManager';
@@ -90,7 +90,14 @@ const AristochatsPage = () => {
     const [codeInput, setCodeInput] = useState('');
     const [codeError, setCodeError] = useState('');
     const navigate = useNavigate();
-    const { setGameFlag } = useGame();
+    const { setGameFlag, checkFlag } = useGame();
+
+    // Vérifier que Pinocchio est complété avant d'accéder aux Aristochats
+    useEffect(() => {
+        if (!checkFlag('zone_pinocchio_done')) {
+            navigate('/map');
+        }
+    }, [checkFlag, navigate]);
 
     const zoneSounds = {
         1: musicZone1,

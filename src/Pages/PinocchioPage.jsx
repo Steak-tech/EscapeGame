@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGame } from '../Context/GameContext.jsx';
 import bgPinocchio from '../assets/pinocchio.png';
@@ -9,6 +9,12 @@ import imgPantinBavard from '../assets/Pantin Bavard.png';
 import imgPantinGuerrier from '../assets/Pantin Guerrier.png';
 import imgPantinSauvage from '../assets/Pantin Sauvage.png';
 import imgCartePino from '../assets/cartepino.png';
+import BulleZazu from '../assets/BulleZazu.png';
+import Gemini1 from '../assets/Gemini1.png';
+import Gemini2 from '../assets/Gemini2.png';
+import Gemini3 from '../assets/Gemini3.png';
+import Gemini4 from '../assets/Gemini4.png';
+import Gemini5 from '../assets/Gemini5.png';
 
 // Configuration des 6 images à relier
 const pinocchioImages = [
@@ -68,6 +74,160 @@ const finalZone = {
     size: { width: '400px', height: '300px' },
 };
 
+// --- Dialogue dédié à la page Pinocchio (même logique que LionPage) ---
+const PinocchioDialogue = ({ script, onComplete }) => {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [displayedText, setDisplayedText] = useState('');
+    const [isTyping, setIsTyping] = useState(false);
+
+    const currentLine = script[currentIndex];
+
+    // Retour à la ligne automatique
+    const wrapText = (text, maxCharsPerLine = 55) => {
+        if (!text) return '';
+        const words = text.split(' ');
+        const lines = [];
+        let currentLineText = '';
+
+        words.forEach((word) => {
+            const tentative = currentLineText ? `${currentLineText} ${word}` : word;
+            if (tentative.length > maxCharsPerLine) {
+                if (currentLineText) lines.push(currentLineText);
+                currentLineText = word;
+            } else {
+                currentLineText = tentative;
+            }
+        });
+
+        if (currentLineText) lines.push(currentLineText);
+        return lines.join('\n');
+    };
+
+    const fullText = currentLine ? wrapText(currentLine.text) : '';
+
+    // Effet machine à écrire
+    useEffect(() => {
+        if (!currentLine) return;
+
+        setDisplayedText('');
+        setIsTyping(true);
+
+        let charIndex = 0;
+        const typingInterval = setInterval(() => {
+            if (charIndex <= fullText.length) {
+                setDisplayedText(fullText.slice(0, charIndex));
+                charIndex++;
+            } else {
+                setIsTyping(false);
+                clearInterval(typingInterval);
+            }
+        }, 30);
+
+        return () => clearInterval(typingInterval);
+    }, [currentIndex, currentLine, fullText]);
+
+    const handleNext = () => {
+        // Spam clic : si ça tape encore, on affiche tout d'un coup
+        if (isTyping && currentLine) {
+            if (displayedText !== fullText) {
+                setDisplayedText(fullText);
+            }
+            setIsTyping(false);
+            return;
+        }
+
+        // Sinon, on passe à la réplique suivante
+        if (currentIndex < script.length - 1) {
+            setCurrentIndex((prev) => prev + 1);
+        } else if (onComplete) {
+            onComplete();
+        }
+    };
+
+    if (!currentLine) return null;
+
+    return (
+        <div
+            onClick={handleNext}
+            className="fixed bottom-0 left-0 w-full px-4 pb-4 pt-2 z-50 cursor-pointer via-black/90 to-transparent from-amber-900 bg-gradient-to-t"
+        >
+            <div className="max-w-5xl mx-auto flex w-full items-end gap-6">
+                {/* AVATAR PANTIN À GAUCHE (même positionnement que Zazu) */}
+                <div
+                    className="relative flex-none transform translate-y-15 -translate-x-10"
+                    style={{ width: '400px', height: '430px' }}
+                >
+                    <img
+                        src={currentLine.image}
+                        alt={currentLine.character}
+                        className="w-full h-full object-contain drop-shadow-[0_8px_20px_rgba(0,0,0,0.7)]"
+                    />
+                </div>
+
+                {/* BULLE DE DIALOGUE (mêmes image et position que pour Zazu) */}
+                <div className="relative flex-none mb-12 flex justify-start transform -translate-y-0 -translate-x-130">
+                    {/* Image de la bulle */}
+                    <img
+                        src={BulleZazu}
+                        alt="Bulle de dialogue"
+                        style={{ width: '1300px', maxWidth: '100%', height: 'auto' }}
+                        className="object-contain"
+                    />
+
+                    {/* Contenu texte dans la bulle (positionné à l'intérieur du parchemin) */}
+                    <div className="absolute top-[10%] bottom-[18%] left-[35%] right-[14%] flex flex-col justify-center py-2">
+                        <span className="shrink-0 block text-2xl md:text-3xl font-bold text-amber-900 drop-shadow-md mb-2">
+                            {currentLine.character}
+                        </span>
+                        <p className="text-black text-sm md:text-base leading-relaxed font-sans drop-shadow-sm overflow-y-auto whitespace-pre-line">
+                            {displayedText}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// Petit scénario de dialogue d'intro pour la zone Pinocchio (similaire au Lion)
+const SCENARIO_PINOCCHIO = [
+    {
+        id: 1,
+        character: 'Gemini',
+        image: Gemini1,
+        text: "Bienvenue dans l'atelier de Gepetto… Chaque objet ici garde la trace d'un choix, d'un mensonge ou d'un acte de courage.",
+        side: 'left',
+    },
+    {
+        id: 2,
+        character: 'Gemini',
+        image: Gemini2,
+        text: 'Regarde bien les pantins et les objets autour de toi. Ils ont chacun une histoire à raconter.',
+        side: 'left',
+    },
+    {
+        id: 3,
+        character: 'Gemini',
+        image: Gemini3,
+        text: "Chaque pantin et objet est lié à un mot clé. Relie-les pour révéler leur secret.",
+        side: 'left',
+    },
+    {
+        id: 4,
+        character: 'Gemini',
+        image: Gemini4,
+        text: "Mais attention, il suffit d'un lien faux pour tout effondrer.",
+        side: 'left',
+    },
+    {
+        id: 5,
+        character: 'Gemini',
+        image: Gemini5,
+        text: "Quand tu auras relier tous les pantins et objets sans erreur, tu pourras compléter la prophétie et aider Pinocchio à devenir vraiment vivant.",
+        side: 'left',
+    },
+];
+
 const PinocchioPage = () => {
     const [selectedId, setSelectedId] = useState(null);
     const [links, setLinks] = useState([]); // [{from,to}]
@@ -77,9 +237,17 @@ const PinocchioPage = () => {
     const [wordVerite, setWordVerite] = useState('');
     const [wordCourage, setWordCourage] = useState('');
     const [finalError, setFinalError] = useState('');
+    const [showDialogue, setShowDialogue] = useState(true);
 
     const navigate = useNavigate();
-    const { setGameFlag } = useGame();
+    const { setGameFlag, checkFlag } = useGame();
+
+    // Vérifier que le puzzle de la carte est complété avant d'accéder à Pinocchio
+    useEffect(() => {
+        if (!checkFlag('map_puzzle_completed')) {
+            navigate('/map');
+        }
+    }, [checkFlag, navigate]);
 
     const handleImageClick = (id) => {
         // Premier clic : on sélectionne l'image
@@ -149,6 +317,10 @@ const PinocchioPage = () => {
         }
     };
 
+    const handleDialogueEnd = () => {
+        setShowDialogue(false);
+    };
+
     return (
         <div
             className="relative w-full h-screen overflow-hidden bg-black text-amber-50"
@@ -166,72 +338,83 @@ const PinocchioPage = () => {
 
             {/* Contenu principal */}
             <div className="relative z-10 w-full h-full">
-                {/* Zone de jeu */}
-                <div className="absolute inset-0">
-                    {/* Images cliquables / zones de drag & drop */}
-                    {pinocchioImages.map((img) => {
-                        const isSelected = selectedId === img.id;
-                        const isTarget = img.id === 4 || img.id === 5 || img.id === 6;
-                        const isSource = !isTarget;
-                        return (
-                            <button
-                                key={img.id}
-                                type="button"
-                                onClick={() => handleImageClick(img.id)}
-                                draggable={isSource}
-                                onDragStart={
-                                    isSource
-                                        ? (e) => {
-                                            e.dataTransfer.setData('text/plain', String(img.id));
-                                            // On indique que c'est un mouvement, pas une copie (évite le +)
-                                            e.dataTransfer.effectAllowed = 'move';
-                                            setSelectedId(img.id);
-                                        }
-                                        : undefined
-                                }
-                                onDragOver={
-                                    isTarget
-                                        ? (e) => {
-                                            e.preventDefault();
-                                            // Cohérent avec effectAllowed pour ne pas afficher le +
-                                            e.dataTransfer.dropEffect = 'move';
-                                        }
-                                        : undefined
-                                }
-                                onDrop={
-                                    isTarget
-                                        ? (e) => {
-                                            e.preventDefault();
-                                            const fromId = Number(
-                                                e.dataTransfer.getData('text/plain'),
-                                            );
-                                            if (!fromId) return;
-                                            setSelectedId(fromId);
-                                            handleImageClick(img.id);
-                                        }
-                                        : undefined
-                                }
-                                className="absolute -translate-x-1/2 -translate-y-1/2 focus:outline-none focus-visible:outline-none"
-                                style={{
-                                    top: img.position.top,
-                                    left: img.position.left,
-                                    // IMPORTANT : la taille est portée par le bouton
-                                    // pour que les valeurs en % soient bien appliquées
-                                    width: img.size?.width,
-                                    height: img.size?.height,
-                                    outline: 'none', // sécurité supplémentaire contre le halo bleu natif
-                                }}
-                            >
-                                {/* Image qui remplit le bouton, sans fond supplémentaire */}
-                                <img
-                                    src={img.src}
-                                    alt={`Indice ${img.id}`}
-                                    className="w-full h-full object-contain block"
-                                />
-                            </button>
-                        );
-                    })}
-                </div>
+
+                {/* Dialogue d'intro Pinocchio (propre à cette page) */}
+                {showDialogue && (
+                    <PinocchioDialogue
+                        script={SCENARIO_PINOCCHIO}
+                        onComplete={handleDialogueEnd}
+                    />
+                )}
+
+                {/* Zone de jeu (après le dialogue) */}
+                {!showDialogue && (
+                    <div className="absolute inset-0">
+                        {/* Images cliquables / zones de drag & drop */}
+                        {pinocchioImages.map((img) => {
+                            const isSelected = selectedId === img.id;
+                            const isTarget = img.id === 4 || img.id === 5 || img.id === 6;
+                            const isSource = !isTarget;
+                            return (
+                                <button
+                                    key={img.id}
+                                    type="button"
+                                    onClick={() => handleImageClick(img.id)}
+                                    draggable={isSource}
+                                    onDragStart={
+                                        isSource
+                                            ? (e) => {
+                                                e.dataTransfer.setData('text/plain', String(img.id));
+                                                // On indique que c'est un mouvement, pas une copie (évite le +)
+                                                e.dataTransfer.effectAllowed = 'move';
+                                                setSelectedId(img.id);
+                                            }
+                                            : undefined
+                                    }
+                                    onDragOver={
+                                        isTarget
+                                            ? (e) => {
+                                                e.preventDefault();
+                                                // Cohérent avec effectAllowed pour ne pas afficher le +
+                                                e.dataTransfer.dropEffect = 'move';
+                                            }
+                                            : undefined
+                                    }
+                                    onDrop={
+                                        isTarget
+                                            ? (e) => {
+                                                e.preventDefault();
+                                                const fromId = Number(
+                                                    e.dataTransfer.getData('text/plain'),
+                                                );
+                                                if (!fromId) return;
+                                                setSelectedId(fromId);
+                                                handleImageClick(img.id);
+                                            }
+                                            : undefined
+                                    }
+                                    className="absolute -translate-x-1/2 -translate-y-1/2 focus:outline-none focus-visible:outline-none"
+                                    style={{
+                                        top: img.position.top,
+                                        left: img.position.left,
+                                        // IMPORTANT : la taille est portée par le bouton
+                                        // pour que les valeurs en % soient bien appliquées
+                                        width: img.size?.width,
+                                        height: img.size?.height,
+                                        outline: 'none', // sécurité supplémentaire contre le halo bleu natif
+                                    }}
+                                >
+                                    {/* Image qui remplit le bouton, sans fond supplémentaire */}
+                                    <img
+                                        src={img.src}
+                                        alt={`Indice ${img.id}`}
+                                        className="w-full h-full object-contain block"
+                                    />
+                                </button>
+                            );
+                        })}
+                    </div>
+                )}
 
                 {/* Mots trouvés */}
                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur-sm px-4 py-3 rounded-xl border border-amber-500/60 min-w-[260px] text-center">

@@ -11,6 +11,7 @@ import FullMapPage from './Pages/FullMapPage.jsx';
 import PinocchioPage from './Pages/PinocchioPage.jsx';
 import AristochatsPage from './Pages/AristochatsPage.jsx';
 import LionPage from './Pages/LionPage.jsx';
+import WallEPage from './Pages/WallEPage.jsx';
 import DoorTransition from "./Page/DoorTransition.jsx";
 
 export default function App() {
@@ -83,6 +84,7 @@ export default function App() {
                 <Route path="/zone/pinocchio" element={<PinocchioPage />} />
                 <Route path="/zone/aristochats" element={<AristochatsPage />} />
                 <Route path="/zone/lion" element={<LionPage />} />
+                <Route path="/zone/walle" element={<WallEPage />} />
             </Routes>
         </GameProvider>
     )

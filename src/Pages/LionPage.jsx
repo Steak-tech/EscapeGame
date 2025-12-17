@@ -7,13 +7,12 @@ import Zazu1 from '../assets/Zazu1.png';
 import Zazu2 from '../assets/Zazu2.png';
 import Zazu3 from '../assets/Zazu3.png';
 import Zazu4 from '../assets/Zazu4.png';
-import Zazu5 from '../assets/Zazu5.png';
 import BulleZazu from '../assets/BulleZazu.png';
 
 
-const SECRET_CODE = 'ROIS';
+const SECRET_CODE = 'LION';
 
-// Système de dialogue dédié à la page Roi Lion (avec effet machine à écrire)
+// Système de dialogue dédié à la page Roi Lion
 const LionDialogue = ({ script, onComplete }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [displayedText, setDisplayedText] = useState("");
@@ -91,7 +90,6 @@ const LionDialogue = ({ script, onComplete }) => {
             className="fixed bottom-0 left-0 w-full px-4 pb-4 pt-2 z-50 cursor-pointer via-black/90 to-transparent from-amber-900 bg-gradient-to-t"
         >
             <div className="max-w-5xl mx-auto flex w-full items-end gap-6">
-                {/* AVATAR ZAZU À GAUCHE (taille fixe, ne rétrécit plus) */}
                 <div
                     className="relative flex-none transform translate-y-15 -translate-x-10"
                     style={{ width: '400px', height: '430px' }}
@@ -103,7 +101,6 @@ const LionDialogue = ({ script, onComplete }) => {
                     />
                 </div>
 
-                {/* BULLE DE DIALOGUE SPÉCIALE ZAZU (position personnalisée) */}
                 <div className="relative flex-none mb-12 flex justify-start transform -translate-y-0 -translate-x-130">
                     {/* Image de la bulle */}
                     <img
@@ -113,7 +110,7 @@ const LionDialogue = ({ script, onComplete }) => {
                         className="object-contain"
                     />
 
-                    {/* Contenu texte dans la bulle (positionné à l'intérieur du parchemin) */}
+                    {/* Contenu texte dans la bulle */}
                     <div className="absolute top-[10%] bottom-[18%] left-[35%] right-[14%] flex flex-col justify-center py-2">
                         <span className="shrink-0 block text-2xl md:text-3xl font-bold text-amber-900 drop-shadow-md mb-2">
                             {currentLine.character}
@@ -161,7 +158,6 @@ const SCENARIO_LION = [
 ];
 
 // Configuration des positions des lettres du code révélé (en haut à droite)
-// Tu peux ajuster la position de chaque lettre individuellement
 const codeLettersPositions = [
     { letter: 'R', position: { top: '8%', left: '60%' }, size: { width: '80px', height: '80px' } },
     { letter: 'O', position: { top: '8%', left: '71%' }, size: { width: '80px', height: '80px' } },
@@ -248,7 +244,7 @@ const LionPage = () => {
             return;
         }
 
-        // Gestion de la séquence du code "ROIS"
+        // Gestion de la séquence du code "LION"
         setCurrentCode((prev) => {
             const next = prev + value;
 
@@ -271,7 +267,7 @@ const LionPage = () => {
                 // Rediriger vers la map après 10 secondes
                 setTimeout(() => {
                     navigate('/map');
-                }, 10000);
+                }, 8000);
             }
 
             return next;
@@ -391,7 +387,7 @@ const LionPage = () => {
                 });
             });
 
-            // Timeline : chaque lettre \"vole\" vers sa position finale
+            // Timeline : chaque lettre vole vers sa position finale
             const tl = gsap.timeline();
             SECRET_CODE.split('').forEach((_, index) => {
                 tl.to(
@@ -439,7 +435,7 @@ const LionPage = () => {
                 className="absolute inset-0 w-full h-full object-cover"
             />
 
-            {/* Révélation du code en haut à droite quand le joueur a trouvé "ROIS" */}
+            {/* Révélation du code en haut à droite quand le joueur a trouvé "LION" */}
             {codeSolved && (
                 <div className="absolute inset-0 pointer-events-none z-20">
                     {codeLettersPositions.map((config, index) => {
@@ -491,7 +487,7 @@ const LionPage = () => {
 
             {/* Contenu principal */}
             <div className="relative z-10 w-full h-full">
-                {/* Dialogue d'intro spécifique au Roi Lion */}
+                {/* Dialogue d'intro spécifique au RoI Lion */}
                 {showDialogue && (
                     <LionDialogue
                         script={SCENARIO_LION}

@@ -68,7 +68,7 @@ const normalizePairKey = (a, b) => {
     return `${x}-${y}`;
 };
 
-// Zone finale cliquable (invisible), que tu peux déplacer comme tu veux
+// Zone finale cliquable, que tu peux déplacer comme tu veux
 const finalZone = {
     position: { top: '37%', left: '50%' },
     size: { width: '400px', height: '300px' },
@@ -230,7 +230,7 @@ const SCENARIO_PINOCCHIO = [
 
 const PinocchioPage = () => {
     const [selectedId, setSelectedId] = useState(null);
-    const [links, setLinks] = useState([]); // [{from,to}]
+    const [links, setLinks] = useState([]);
     const [showFinalModal, setShowFinalModal] = useState(false);
     const [wordVrai, setWordVrai] = useState('');
     const [wordConscience, setWordConscience] = useState('');
@@ -267,8 +267,8 @@ const PinocchioPage = () => {
         // Si la paire n'est pas une combinaison valide -> reset complet
         const isValidPair = !!linkWords[pairKey];
         if (!isValidPair) {
-            setLinks([]);          // on efface tous les liens trouvés
-            setSelectedId(null);   // on enlève la sélection
+            setLinks([]);
+            setSelectedId(null);
             return;
         }
 
@@ -324,7 +324,7 @@ const PinocchioPage = () => {
     return (
         <div
             className="relative w-full h-screen overflow-hidden bg-black text-amber-50"
-            style={{ userSelect: 'none' }} // évite les zones bleues de sélection au double-clic
+            style={{ userSelect: 'none' }}
         >
             {/* Fond Pinocchio */}
             <img
@@ -365,7 +365,6 @@ const PinocchioPage = () => {
                                         isSource
                                             ? (e) => {
                                                 e.dataTransfer.setData('text/plain', String(img.id));
-                                                // On indique que c'est un mouvement, pas une copie (évite le +)
                                                 e.dataTransfer.effectAllowed = 'move';
                                                 setSelectedId(img.id);
                                             }
@@ -375,7 +374,6 @@ const PinocchioPage = () => {
                                         isTarget
                                             ? (e) => {
                                                 e.preventDefault();
-                                                // Cohérent avec effectAllowed pour ne pas afficher le +
                                                 e.dataTransfer.dropEffect = 'move';
                                             }
                                             : undefined
@@ -397,11 +395,9 @@ const PinocchioPage = () => {
                                     style={{
                                         top: img.position.top,
                                         left: img.position.left,
-                                        // IMPORTANT : la taille est portée par le bouton
-                                        // pour que les valeurs en % soient bien appliquées
                                         width: img.size?.width,
                                         height: img.size?.height,
-                                        outline: 'none', // sécurité supplémentaire contre le halo bleu natif
+                                        outline: 'none',
                                     }}
                                 >
                                     {/* Image qui remplit le bouton, sans fond supplémentaire */}
@@ -454,7 +450,6 @@ const PinocchioPage = () => {
                             transform: 'translate(-50%, -50%)',
                             width: finalZone.size.width,
                             height: finalZone.size.height,
-                            // Zone finale invisible en prod (aucun fond)
                             backgroundColor: 'transparent',
                             border: 'none',
                             outline: 'none',

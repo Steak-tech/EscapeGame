@@ -10,7 +10,7 @@ import Walle4 from '../assets/Walle4.png';
 import Walle5 from '../assets/Walle5.png';
 
 const clickableZone = {
-    position: { top: '70%', left: '53%' }, // À ajuster selon vos besoins
+    position: { top: '70%', left: '53%' },
     size: { width: '360px', height: '200px' },
 };
 
@@ -92,7 +92,7 @@ const WalleDialogue = ({ script, onComplete }) => {
             className="fixed bottom-0 left-0 w-full px-4 pb-4 pt-2 z-50 cursor-pointer via-black/90 to-transparent from-amber-900 bg-gradient-to-t"
         >
             <div className="max-w-5xl mx-auto flex w-full items-end gap-6">
-                {/* Avatar WALL·E (même placement que Pinocchio/Lion) */}
+                {/* Avatar WALL·E */}
                 <div
                     className="relative flex-none transform translate-y-15 -translate-x-10"
                     style={{ width: '400px', height: '430px' }}
@@ -104,7 +104,7 @@ const WalleDialogue = ({ script, onComplete }) => {
                     />
                 </div>
 
-                {/* Bulle de dialogue (même image BulleZazu et même position) */}
+                {/* Bulle de dialogue */}
                 <div className="relative flex-none mb-12 flex justify-start transform -translate-y-0 -translate-x-130">
                     <img
                         src={BulleZazu}
@@ -257,11 +257,9 @@ const generateRandomPoints = (count, excludeIds) => {
 
 const randomPoints = generateRandomPoints(60, starPoints.map(s => s.id));
 
-// Ordre de connexion attendu pour former le château de Disney
-// Suit exactement le contour du SVG de référence
-// Note: on vérifie seulement les 19 premiers points (sans le retour au point 1)
+
 const expectedConnectionOrder = [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 1
 ];
 
 const WallEPage = () => {
@@ -292,9 +290,16 @@ const WallEPage = () => {
     };
 
     const handleStarClick = (starId) => {
-        // Ne pas permettre de cliquer deux fois sur le même point
+        // Ne pas permettre de cliquer deux fois sur le même point,
+        // sauf pour fermer la boucle en revenant du point 19 au point 1
         if (connectedPoints.includes(starId)) {
-            return;
+            const isClosingLoop =
+                starId === expectedConnectionOrder[expectedConnectionOrder.length - 1] && // 1 (dernier dans la séquence 1..19,1)
+                connectedPoints.includes(expectedConnectionOrder[expectedConnectionOrder.length - 2]); // 19 déjà cliqué
+
+            if (!isClosingLoop) {
+                return;
+            }
         }
 
         // Si c'est le premier clic, vérifier qu'on commence par le point 1 (seulement pour les points de la solution)
@@ -313,7 +318,7 @@ const WallEPage = () => {
         const newPoints = [...connectedPoints, starId];
         setConnectedPoints(newPoints);
 
-        // Vérifier si on a cliqué tous les points de la solution (19 points)
+        // Vérifier si on a cliqué tous les points de la solution (y compris le retour au point 1)
         // Filtrer pour ne garder que les points de la solution dans l'ordre où ils ont été cliqués
         const solutionPoints = newPoints.filter(pointId =>
             starPoints.some(p => p.id === pointId)
@@ -323,7 +328,7 @@ const WallEPage = () => {
         console.log('Nombre de points solution:', solutionPoints.length, 'sur', expectedConnectionOrder.length);
 
         if (solutionPoints.length === expectedConnectionOrder.length) {
-            // Vérifier si l'ordre des points de la solution est correct (1 à 19)
+            // Vérifier si l'ordre des points de la solution est correct (1 à 19 puis retour à 1)
             console.log('Tous les points solution sont cliqués, vérification...');
             setTimeout(() => {
                 checkConstellation(solutionPoints);
@@ -365,7 +370,7 @@ const WallEPage = () => {
                 setShowVictory(false);
                 setShowPopup(false);
                 navigate('/map');
-            }, 3000);
+            }, 8000); // Augmenté à 8 secondes pour laisser le temps de lire
         } else {
             // Réinitialiser
             console.log('❌ Échec, réinitialisation');
@@ -399,7 +404,7 @@ const WallEPage = () => {
             {/* Voile sombre pour lisibilité */}
             <div className="absolute inset-0 bg-black/40" />
 
-            {/* Dialogue d'intro WALL·E (même système que Pinocchio) */}
+            {/* Dialogue d'intro WALL·E */}
             {showDialogue && (
                 <WalleDialogue
                     script={SCENARIO_WALLE}
@@ -422,7 +427,6 @@ const WallEPage = () => {
                         cursor: 'pointer',
                     }}
                 >
-                    {/* Zone cliquable transparente */}
                 </button>
             )}
 
@@ -526,7 +530,7 @@ const WallEPage = () => {
 
                                     return (
                                         <g key={star.id}>
-                                            {/* Point visible - pas d'indication visuelle pour les points non cliqués */}
+                                            {/* Point visible pas d'indication visuelle pour les points non cliqués */}
                                             <circle
                                                 cx={star.x}
                                                 cy={star.y}
@@ -620,8 +624,11 @@ const WallEPage = () => {
                                     <h2 className="text-3xl font-bold text-cyan-300 mb-2 font-mono">
                                         CONSTELLATION RECONSTRUITE
                                     </h2>
-                                    <p className="text-xl text-cyan-200 font-mono">
+                                    <p className="text-xl text-cyan-200 font-mono mb-3">
                                         Mémoire restaurée avec succès !
+                                    </p>
+                                    <p className="text-lg text-cyan-100 font-mono mb-4">
+                                        Bip... bip... <span className="text-cyan-300 font-bold animate-pulse" style={{ textShadow: '0 0 10px rgba(34, 211, 238, 0.8), 0 0 20px rgba(34, 211, 238, 0.6)' }}>Eve</span>, je vais bientôt te retrouver...
                                     </p>
                                     <p className="text-sm text-cyan-300/70 mt-4 font-mono">
                                         Redirection en cours...

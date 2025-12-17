@@ -30,7 +30,7 @@ const FullIntroSequence = ({ fps = 144, width = 1920, height = 1080 }) => {
 
     const [introImages, setIntroImages] = useState([]);
 
-    const {pickupItem, hasItem, setGameFlag, checkFlag, useItem} = useGame();
+    const {pickupItem, hasItem, setGameFlag, checkFlag, useItem, playMusic} = useGame();
 
     useEffect(() => {
         let loadedCount = 0;
@@ -52,6 +52,7 @@ const FullIntroSequence = ({ fps = 144, width = 1920, height = 1080 }) => {
     }, []);
 
     useEffect(() => {
+        playMusic('intro');
         if (step !== 1) return;
 
         const canvas = canvasRef.current;

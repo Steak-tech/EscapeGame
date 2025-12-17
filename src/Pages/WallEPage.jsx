@@ -271,13 +271,14 @@ const WallEPage = () => {
     const [showVictory, setShowVictory] = useState(false);
     const [showDialogue, setShowDialogue] = useState(true);
     const navigate = useNavigate();
-    const { setGameFlag, checkFlag } = useGame();
+    const { setGameFlag, checkFlag, playMusic } = useGame();
 
     // Vérifier que Pinocchio, Aristochats et Lion sont complétés avant d'accéder à WALL·E
     useEffect(() => {
         if (!checkFlag('zone_pinocchio_done') || !checkFlag('zone_aristochats_done') || !checkFlag('zone_lion_done')) {
             navigate('/map');
         }
+        playMusic('walle');
     }, [checkFlag, navigate]);
 
     // Fonction pour obtenir l'ordre d'un point dans la séquence

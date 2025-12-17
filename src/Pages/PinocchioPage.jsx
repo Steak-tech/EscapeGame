@@ -240,13 +240,14 @@ const PinocchioPage = () => {
     const [showDialogue, setShowDialogue] = useState(true);
 
     const navigate = useNavigate();
-    const { setGameFlag, checkFlag } = useGame();
+    const { setGameFlag, checkFlag, playMusic } = useGame();
 
     // Vérifier que le puzzle de la carte est complété avant d'accéder à Pinocchio
     useEffect(() => {
         if (!checkFlag('map_puzzle_completed')) {
             navigate('/map');
         }
+        playMusic('pinocchio');
     }, [checkFlag, navigate]);
 
     const handleImageClick = (id) => {

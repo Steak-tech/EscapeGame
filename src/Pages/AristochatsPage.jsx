@@ -107,7 +107,7 @@ const AristochatsPage = () => {
     };
 
     const playZoneMusic = (zoneId) => {
-        if (isPlaying) return; // on bloque le spam clique tant qu'une musique joue
+        if (isPlaying) return;
 
         const src = zoneSounds[zoneId];
         if (!src) return;
@@ -135,7 +135,6 @@ const AristochatsPage = () => {
     const handleZoneClick = (zoneId) => {
         console.log(`Zone ${zoneId} cliquée`);
         playZoneMusic(zoneId);
-        // Ici tu pourras ajouter la logique pour chaque zone (popup, énigme, etc.)
     };
 
     const handleHighlightClick = () => {

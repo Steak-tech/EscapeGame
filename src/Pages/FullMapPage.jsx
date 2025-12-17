@@ -7,6 +7,7 @@ import mapPinocchioDone from '../assets/Carte 2.png';
 import mapAristochatsDone from '../assets/Carte 3.png';
 import mapLionDone from '../assets/Carte 4.png';
 import mapAllDone from '../assets/Carte 5.png';
+import DebugPanel from "../Page/DebugPanel.jsx";
 
 const zonesConfig = [
     {
@@ -58,12 +59,13 @@ const zonesConfig = [
 
 const FullMapPage = () => {
     const navigate = useNavigate();
-    const { setGameFlag, pickupItem, checkFlag, changeRoom, setCloseMap, closeMap, setHasNavigated } = useGame();
+    const { setGameFlag, pickupItem, checkFlag, changeRoom, setCloseMap, closeMap, setHasNavigated, stopMusic, resetGame } = useGame();
 
     useEffect(() => {
         if (!checkFlag('map_puzzle_completed')) {
             navigate('/atelier');
         }
+        stopMusic()
     }, []);
 
     // Détermine quelle image de carte afficher selon les flags validés
@@ -115,6 +117,9 @@ const FullMapPage = () => {
     return (
         <div className="relative w-full h-screen overflow-hidden bg-gradient-to-b from-slate-900 via-slate-950 to-black text-amber-50">
             {/* Vignette sombre autour */}
+            <button onClick={resetGame} className="fixed bottom-4 right-4 z-50 bg-red-600 text-white px-3 py-1 rounded-lg text-xs hover:bg-red-700">
+                Supprimer les données sauvegardées
+            </button>
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0,transparent_45%,rgba(0,0,0,0.9)_100%)]" />
 
             {/* Contenu principal */}

@@ -10,13 +10,13 @@ const piecesConfig = [
     },
     {
         id: 2,
-        question: 'Trouver le prénom',
+        question: 'Trouver le prénom du lapin',
         answer: 'oswald',
         position: { top: '20%', left: '45%' },
     },
     {
         id: 3,
-        question: 'Trouver le code',
+        question: 'Trouver le prénom caché sur le dessin',
         answer: 'alice',
         position: { top: '80%', left: '60%' },
     },

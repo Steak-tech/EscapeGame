@@ -213,13 +213,14 @@ const LionPage = () => {
     const codeLetterRefs = useRef([]);
 
     const navigate = useNavigate();
-    const { setGameFlag, checkFlag } = useGame();
+    const { setGameFlag, checkFlag, playMusic } = useGame();
 
     // Vérifier que Pinocchio et Aristochats sont complétés avant d'accéder au Roi Lion
     useEffect(() => {
         if (!checkFlag('zone_pinocchio_done') || !checkFlag('zone_aristochats_done')) {
             navigate('/map');
         }
+        playMusic('lion');
     }, [checkFlag, navigate]);
 
     const handleDialogueEnd = () => {

@@ -144,11 +144,12 @@ const MapSequence = ({
         <>
             {/* 1. ICONE D'OUVERTURE (Visible seulement si fermé) */}
             {uiState === 'CLOSED' && !hasNavigated &&   (
-                <div onClick={handleOpenMap} className="cursor-pointer transition-transform hover:scale-110">
+                <div onClick={handleOpenMap} className="cursor-pointer select-none">
                     <img
                         src={mapIconImg}
+                        draggable="false"
                         alt='Open map'
-                        className='absolute bottom-4 left-4 w-40 z-20 cursor-pointer'
+                        className='absolute top-2 left-4 w-40 z-20 cursor-pointer'
                     />
                 </div>
             )}

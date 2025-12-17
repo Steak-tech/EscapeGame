@@ -6,6 +6,7 @@ import Notification from "../Components/Notification.jsx"; // ✅ IMPORT
 // --- DICTIONNAIRE DES NOMS D'OBJETS ---
 const ITEMS_NAMES = {
     carte_complete: "Carte du Parc",
+    cle_porte: "Clé de la Porte",
 };
 
 const GameContext = createContext();
